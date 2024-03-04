@@ -1,0 +1,66 @@
+let numParticles = 10;
+			// Crea un BufferGeometry per la sfera
+			let sphereGeometry = new t.BufferGeometry();
+			let positions = [];
+
+			for (let i = 0; i < numParticles; i++) {
+				let theta = Math.random() * Math.PI * 2;
+				let phi = Math.acos(2 * Math.random() - 1);
+
+				let x = radius * Math.sin(phi) * Math.cos(theta);
+				let y = radius * Math.sin(phi) * Math.sin(theta);
+				let z = radius * Math.cos(phi);
+
+				positions.push(x, y, z);
+			}
+
+			sphereGeometry.setAttribute('position', new t.Float32BufferAttribute(positions, 3));
+
+			// Crea il materiale per le particelle
+			let particleMaterial = new t.PointsMaterial({ color: c, size: 0.1 });
+
+			// Crea il sistema di particelle
+			let particleSystem = new t.Points(sphereGeometry, particleMaterial);
+
+		
+
+
+
+
+			
+			world.add(particleSystem);
+			cubes.push(particleSystem);
+
+
+// function updateNumberOfCubes ()
+	// {
+	// 	let wins = windowManager.getWindows();
+
+	// 	// remove all cubes
+	// 	cubes.forEach((c) => {
+	// 		world.remove(c);
+	// 	})
+
+	// 	cubes = [];
+
+	// 	// add new cubes based on the current window setup
+	// 	for (let i = 0; i < wins.length; i++)
+	// 	{
+	// 		let win = wins[i];
+
+	// 		let c = new t.Color();
+	// 		c.setHSL(i * .1, 1.0, .5);
+
+	// 		let s = 100 + i * 50;
+	// 		//let cube = new t.Mesh(new t.BoxGeometry(s, s, s), new t.MeshBasicMaterial({color: c , wireframe: true}));
+	// 		let cube = new t.Mesh(new t.SphereGeometry(s, 32, 32), new t.MeshBasicMaterial({ color: c, wireframe: true }));
+	// 		cube.position.x = win.shape.x + (win.shape.w * .5);
+	// 		cube.position.y = win.shape.y + (win.shape.h * .5);
+
+	// 		// Definisci il raggio e il numero di particelle desiderato
+			
+			
+	// 		world.add(cube);
+	// 		cubes.push(cube);
+	// 	}
+	// }
