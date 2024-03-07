@@ -189,14 +189,16 @@ else
 			let c = new t.Color();
 			c.setHSL(i * 0.1, 1.0, 0.5);
 			
-			let radius = 100;
+			let radius = 50+ 15*i;
 			let numParticles = 100;
 
 			let geometry = new t.BoxGeometry( radius/2, radius/2, radius/2); 
 			let material = new t.MeshBasicMaterial( { color: c , wireframe: true} ); 
 			let cube = new t.Mesh( geometry, material ); 
-	
 
+			var singleGeometry = new t.Geometry();
+	
+			//vvvvv questa parte deve creame una mesh di multiple sphere vvvvvvv
 			// Crea un BufferGeometry per la sfera
 			let sphereGeometry = new t.BufferGeometry();
 			let positions = [];
@@ -220,9 +222,7 @@ else
 			// Crea il sistema di particelle
 			let particleSystem = new t.Points(sphereGeometry, particleMaterial);
 
-
-			
-			var singleGeometry = new t.Geometry();
+			//^^^^^Fino a qui^^^^^^
 
 			singleGeometry.mergeMesh(cube);
 			singleGeometry.mergeMesh(new t.Mesh((new t.SphereGeometry(radius, 16, 32)), material));
