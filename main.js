@@ -136,15 +136,6 @@ else
 
 		let wins = windowManager.getWindows();
 
-		let i = 0;
-		let velocity = [];
-		while (velocity.length != cubes.length) {
-			velocity[i] = (((i + 6506) * Math.abs(3894-i)) % 1209) ** (3/(i+1));
-			velocity[i] = velocity[i] - Math.floor(velocity[i])
-			i += 1;
-		}
-		console.log(velocity)
-
 
 		// loop through all our cubes and update their positions based on current window positions
 		for (let i = 0; i < cubes.length; i++)
@@ -152,15 +143,15 @@ else
 			let cube = cubes[i];
 			let win = wins[i];
 			let _t = t;// + i * .2;
-
-			let posTarget = {x: win.shape.x + (win.shape.w * .5), y: win.shape.y + (win.shape.h * .5)}
+			
+			let alt = win.shape.h;
+			let larg = win.shape.w;
+			let posTarget = {x: win.shape.x + (larg * .5), y: win.shape.y + (alt * .5)};
 
 			cube.position.x = cube.position.x + (posTarget.x - cube.position.x) * falloff;
 			cube.position.y = cube.position.y + (posTarget.y - cube.position.y) * falloff;
-			//cube.rotation.x = _t * (.1 + velocity[i]);
-			//cube.rotation.y = _t * (.1 + velocity[i]);
-			cube.rotation.x = _t * (.1 + Math.random()*0.1);
-			cube.rotation.y = _t * (.1 + Math.random()*0.1);
+			//cube.rotation.x = _t * .5;
+			//cube.rotation.y = _t * .3;
 		};
 
 		renderer.render(scene, camera);
@@ -197,36 +188,49 @@ else
 	
 			let c = new t.Color();
 			c.setHSL(i * 0.1, 1.0, 0.5);
+			
+			let radius = 100;
+			let numParticles = 100;
+
+			let geometry = new t.BoxGeometry( radius/2, radius/2, radius/2); 
+			let material = new t.MeshBasicMaterial( { color: c , wireframe: true} ); 
+			let cube = new t.Mesh( geometry, material ); 
 	
-			let orbitRadius = 60 + i * 30; // Radius of the electron orbit
-			let numElectrons = 10; // Number of electrons
-			let inclinationAngles = [Math.PI / 6, Math.PI / 3, Math.PI / 2]; // Inclination angles for the orbits
 
-			// Create electrons
-			for (let i = 0; i < numElectrons; i++) {
-				let electronOrbit = new t.Object3D(); // Orbit group for electrons
+			// Crea un BufferGeometry per la sfera
+			let sphereGeometry = new t.BufferGeometry();
+			let positions = [];
 
-				for (let j = 0; j < numElectrons; j++) {
-					let electronGeometry = new t.SphereGeometry(1, 8, 8);
-					let electronMaterial = new t.MeshBasicMaterial({ color: 0xff0000 });
-					let electron = new t.Mesh(electronGeometry, electronMaterial);
+			for (let i = 0; i < numParticles; i++) {
+				let theta = Math.random() * Math.PI * 2;
+				let phi = Math.acos(2 * Math.random() - 1);
 
-					let angle = (j / numElectrons) * Math.PI * 2; // Angle around the orbit
+				let x = radius * Math.sin(phi) * Math.cos(theta);
+				let y = radius * Math.sin(phi) * Math.sin(theta);
+				let z = radius * Math.cos(phi);
 
-					// Calculate electron position with inclination
-					let x = Math.cos(angle) * orbitRadius;
-					let y = Math.sin(angle) * orbitRadius * Math.cos(inclinationAngles[i]);
-					let z = Math.sin(angle) * orbitRadius * Math.sin(inclinationAngles[i]);
-
-					electron.position.set(x, y, z);
-
-					electronOrbit.add(electron);
-				}
-
-				// Add electron orbit to the scene
-				world.add(electronOrbit);
-				cubes.push(electronOrbit);
+				positions.push(x, y, z);
 			}
+
+			sphereGeometry.setAttribute('position', new t.Float32BufferAttribute(positions, 3));
+
+			// Crea il materiale per le particelle
+			let particleMaterial = new t.PointsMaterial({ color: c, size: 1 });
+
+			// Crea il sistema di particelle
+			let particleSystem = new t.Points(sphereGeometry, particleMaterial);
+
+
+			
+			var singleGeometry = new t.Geometry();
+
+			singleGeometry.mergeMesh(cube);
+			singleGeometry.mergeMesh(new t.Mesh((new t.SphereGeometry(radius, 16, 32)), material));
+
+			var atom = new t.Mesh(singleGeometry, material);
+
+			world.add(atom);
+			cubes.push(atom);
 		}
 	}
 
